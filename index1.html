@@ -1,0 +1,701 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Amtrak Wiget RealTime Ver 2.2</title>
+ <meta name="description" content="Amtrak Square widget to show EStimation, Actual 7 Scheduled timings">
+  <meta type="text" name="json_url" label="JSON Feed URL" help="">
+  <link rel="stylesheet" href='{{media["bootstrap.css"].url}}'>
+  <link rel="stylesheet" href='{{media["main.css"].url }}'>
+   
+<style>
+  @font-face {
+      font-family: "CartoGothicStd-Bold";
+    src: url('{{media["CartoGothicStd-Bold.woff"].url }}') format('woff'), url('{{media["CartoGothicStd-Bold.ttf"].url }}') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+  .main-box{
+     background-image: url('{{media["main-bg.jpg"].url }}');
+  }
+    .loader {
+    left: 0px;
+    top: 0px;
+     width: 1040px;
+     height: 950px;
+    z-index: 9999;
+    position: relative;
+     background: url('{{media["loadingImage.gif"].url }}') 50% 50% no-repeat rgb(249,249,249);
+    opacity: .8;
+}
+</style>
+</head>
+
+<body>
+    <div class="loader"></div>
+  <div class="main-box"></div>  
+   <script src='{{media["jquery.js"].url }}'></script>
+  <script src='{{media["bootstrap.js"].url }}'></script>
+  <script src='{{media["moment.js"].url }}'></script>
+  <script src='{{media["momenttimezone.js"].url }}'></script>
+  <script src='{{media["momenttimezonedata.js"].url }}'></script> 
+</body>
+
+<script>
+    $(window).load(function() {
+    $(".loader").fadeOut("slow");
+});
+ $(document).ready(function(){
+  
+  fetchData();
+
+  function fetchData(){
+     $.getJSON('{{json_url}}')
+    .done(function( data ) {
+      $(".error").remove();
+      if (typeof(Storage) == "undefined") {
+        $('.main-box').append('<h2 class="error">No Local Storage support</h2>');
+      }
+      localStorage.setItem("amtrakdata",JSON.stringify(data));
+      var max = data.length;
+      for(var i=0;i<max;i++){
+        var route_id_raw = data[i]['route_id'];
+        var route_id = route_id_raw.toLowerCase();
+        var short_name = data[i]['short_name'];
+        var long_name = data[i]['long_name'];
+        var destination = data[i]['destination'];
+        var arrival = data[i]['arrival'];
+        var updated_arrival = data[i]['updated_arrival'];
+        var departure = data[i]['departure'];
+        var updated_departure = data[i]['updated_departure'];
+        var default_track = data[i]['default_track'];
+        var track_override = data[i]['track_override'];
+         var status = data[i].status;
+        var expiration = data[i]['expiry'];
+           var UpDated=data[0]['record_updated'];
+       var numberr=Number(UpDated);
+          console.log(numberr);
+          var e = new Date(0);
+         var Up= e.setUTCSeconds(numberr);
+        var date=  new Date(Up);
+          console.log(date);
+         var Hour=date.getHours();
+         var Minute=date.getMinutes();
+          console.log(Hour+':'+Minute);
+            console.log(Hour+':'+Minute);
+          if(Hour>=12){
+                if(Hour==12){Hour=12;}
+              else{Hour=Hour-12;}
+              if(Hour<10){
+                  Hour=('0'+Hour).slice(-2);
+                  if(Minute<10)
+                      Minute=('0'+Minute).slice(-2);
+                   var  UpdatedTime= Hour+":"+Minute+" pm";
+              }
+              else{
+                  if(Minute<10)
+                      Minute=('0'+Minute).slice(-2);
+                   var  UpdatedTime=Hour+":"+Minute+" pm";
+              }
+             
+          }
+          else{
+               if(Hour<10){
+                  Hour=('0'+Hour).slice(-2)
+                   if(Minute<10)
+                      Minute=('0'+Minute).slice(-2);
+                   var  UpdatedTime= Hour+":"+Minute+" am";
+              }
+              else{
+                  if(Minute<10)
+                      Minute=('0'+Minute).slice(-2);
+                   var  UpdatedTime=Hour+":"+Minute+" am";
+              } 
+              
+          }
+                  
+        var timeStampNow = moment().tz('America/Resolute');
+        var timeStampExpiration = moment.tz(expiration,"MM/DD/YYYY h:mm A", "America/Resolute");         
+
+        var is_before = moment(timeStampExpiration).isBefore(timeStampNow);
+          
+           var estArHours=data[i].est_ar.substr(8,2);
+          var estArMinutes=data[i].est_ar.substr(10,2);
+           if(estArHours>=12 ){
+              estArHours= estArHours-12;
+                console.log(estArHours);
+               if(estArHours==0){estArHours=12;}
+             if(estArHours<10){estArHours=('0'+estArHours).slice(-2);}
+                var estAr = estArHours + ':' + estArMinutes+" pm";
+          }
+          else {
+               if(estArHours<10){estArHours=('0'+estArHours).slice(-2);}
+               var estAr = estArHours + ':' + estArMinutes+"am";
+          }
+         
+             var actAr=data[i].arrival.substr(0,5);
+             console.log(actAr);
+             var estDpHours=data[i].est_dp.substr(8,2);
+            var estDpMinutes=data[i].est_dp.substr(10,2);
+          if(estDpHours>=12){
+              estDpHours=estDpHours-12;
+              if(estDpHours==0){estDpHours=12;}
+              if(estDpHours<10){estDpHours=('0'+estDpHours).slice(-2);}
+               var estDp = estDpHours + ':' + estDpMinutes+" pm";
+          }
+          else{
+               if(estDpHours<10){estDpHours=('0'+estDpHours).slice(-2);}
+               var estDp = estDpHours + ':' + estDpMinutes+" am";
+          }
+             
+             console.log(estDp);
+             var actDp=data[i].departure.substr(0,5);
+             console.log(actDp);
+       
+           if(route_id == "am19"){
+         var route_icon = '{{media["am19.png"].url }}';
+        }
+        else if(route_id == "am20"){
+          var route_icon = '{{media["am20.png"].url }}';
+        }
+        else{
+          var route_icon = '{{media["default.png"].url }}';
+        }
+          
+        if(is_before){
+          var expired = true;
+         
+        }
+        else{
+          var expired = false;
+        }
+
+         
+          
+
+
+
+        if(expired || track_override == ""){
+          var correct_track = default_track;
+        }
+        else{
+          var correct_track = track_override;
+        }
+
+        if(expired || updated_departure == ""){
+          var correct_arrival = arrival;
+          var correct_departure = departure;
+        }
+        else{
+          var correct_arrival = updated_arrival;
+          var correct_departure = updated_departure;
+        }
+           
+
+        var rNum = "r"+(i+1); 
+
+        $("."+rNum).remove(); 
+        $('.main-box').append('<div class="'+rNum+'"></div>');
+        $("."+rNum).append('<img src="'+route_icon+'" alt="" class="t-icon">');
+        $("."+rNum).append('<div class="t-track">Departing From '+correct_track+'</div>');
+        $("."+rNum).append('<p class="t-number">'+short_name+'</p>');
+        $("."+rNum).append('<p class="t-dest">'+destination+'</p>');
+        $("."+rNum).append('<p class="lastUpdated">'+"Last Updated Time   "+UpdatedTime+'</p>');
+        $("."+rNum).append('<p class="t-status">'+status+'</p>');
+        $("."+rNum).append('<p class="t-dep-label slides"></p>');
+        $("."+rNum).append('<p class="t-arrival-label slides"></p>');
+        $("."+rNum).append('<p class="t-dep slides"></p>');
+       $("."+rNum).append('<p class="t-arrival slides"></p>');
+       
+ 
+          if(status=="On Time"){
+            if(i==0){
+                document.getElementsByClassName('t-dep-label')[0].innerHTML='<div class="slideshow1">'+'<div> Estimated Arrival</div>'+ '<div>Estimated Departure</div>'+ '<div>Scheduled Arrival</div>'+  '<div>Scheduled Departure</div>'+'</div>' ;
+                 document.getElementsByClassName('t-dep')[0].innerHTML=
+            '<div class="slideshow3">'+'<div>'+ estAr + '</div>'+ '<div>'+ estDp+ '</div>'+ '<div>'+data[i].arrival+ '</div>'+  '<div>'+data[i].departure+' </div>'+'</div>';
+            }
+        if(i==1){
+            document.getElementsByClassName('t-dep-label')[1].innerHTML='<div class="slideshow2">'+'<div> Estimated Arrival</div>'+ '<div>Estimated Departure</div>'+ '<div>Scheduled Arrival</div>'+  '<div>Scheduled Departure</div>'+'</div>' ;
+            document.getElementsByClassName('t-dep')[1].innerHTML=
+            '<div class="slideshow4">'+'<div>'+ estAr + '</div>'+ '<div>'+ estDp+ '</div>'+ '<div>'+data[i].arrival+ '</div>'+  '<div>'+data[i].departure+' </div>'+'</div>';
+        }
+           
+                      } 
+        if(status=="Delayed"){
+            if(i==0){
+                document.getElementsByClassName('t-dep-label')[0].innerHTML='<div class="slideshow9">'+'<div> Estimated Arrival</div>'+ '<div>Estimated Departure</div>'+ '<div>Scheduled Arrival</div>'+  '<div>Scheduled Departure</div>'+'</div>' ;
+                 document.getElementsByClassName('t-dep')[0].innerHTML=
+            '<div class="slideshow11">'+'<div>'+ estAr + '</div>'+ '<div>'+ estDp+ '</div>'+ '<div>'+data[i].arrival+ '</div>'+  '<div>'+data[i].departure+' </div>'+'</div>';
+            }
+        if(i==1){
+            document.getElementsByClassName('t-dep-label')[1].innerHTML='<div class="slideshow10">'+'<div> Estimated Arrival</div>'+ '<div>Estimated Departure</div>'+ '<div>Scheduled Arrival</div>'+  '<div>Scheduled Departure</div>'+'</div>' ;
+            document.getElementsByClassName('t-dep')[1].innerHTML=
+            '<div class="slideshow12">'+'<div>'+ estAr + '</div>'+ '<div>'+ estDp+ '</div>'+ '<div>'+data[i].arrival+ '</div>'+  '<div>'+data[i].departure+' </div>'+'</div>';
+        }
+        }
+     
+         if(status=="Departed"){
+             if(i==0){
+                document.getElementsByClassName('t-dep-label')[i].innerHTML='<div class="slideshow9">'+'<div> Actual Arrival</div>'+ '<div>Actual Departure</div>'+ '<div>Scheduled Arrival</div>'+  '<div>Scheduled Departure</div>'+'</div>';
+                 document.getElementsByClassName('t-dep')[i].innerHTML='<div class="slideshow11">'+'<div>'+ data[i].actual_arrival + '</div>'+ '<div>'+data[i].actual_departure + '</div>'+ '<div>'+data[i].arrival+ '</div>'+  '<div>'+data[i].departure+' </div>'+'</div>' ;
+                       }
+             if(i==1){
+                document.getElementsByClassName('t-dep-label')[i].innerHTML='<div class="slideshow10">'+'<div> Actual Arrival</div>'+ '<div>Actual Departure</div>'+ '<div>Scheduled Arrival</div>'+  '<div>Scheduled Departure</div>'+'</div>';
+                 document.getElementsByClassName('t-dep')[i].innerHTML='<div class="slideshow12">'+'<div>'+ data[i].actual_arrival + '</div>'+ '<div>'+data[i].actual_departure + '</div>'+ '<div>'+data[i].arrival+ '</div>'+  '<div>'+data[i].departure+' </div>'+'</div>' ;
+                       }
+         
+            
+            }
+        
+     
+        
+      }
+        
+         $(".slideshow1 > div:gt(0)").hide();
+
+setInterval(function() { 
+  $('.slideshow1 > div:first')
+    .fadeOut(300)
+    .next()
+    .fadeIn(300)
+    .end()
+    .appendTo('.slideshow1');
+},  4000);
+             $(".slideshow2 > div:gt(0)").hide();
+
+setInterval(function() { 
+  $('.slideshow2 > div:first')
+    .fadeOut(300)
+    .next()
+    .fadeIn(300)
+    .end()
+    .appendTo('.slideshow2');
+},  4000);
+    
+      $(".slideshow3 > div:gt(0)").hide();
+
+setInterval(function() { 
+  $('.slideshow3 > div:first')
+    .fadeOut(300)
+    .next()
+    .fadeIn(300)
+    .end()
+    .appendTo('.slideshow3');
+},  4000);
+             $(".slideshow4 > div:gt(0)").hide();
+
+setInterval(function() { 
+  $('.slideshow4 > div:first')
+    .fadeOut(300)
+    .next()
+    .fadeIn(300)
+    .end()
+    .appendTo('.slideshow4');
+},  4000);
+      
+ $(".slideshow5 > div:gt(0)").hide();
+
+setInterval(function() { 
+  $('.slideshow5 > div:first')
+    .fadeOut(300)
+    .next()
+    .fadeIn(300)
+    .end()
+    .appendTo('.slideshow5');
+},  4000);
+             $(".slideshow6 > div:gt(0)").hide();
+
+setInterval(function() { 
+  $('.slideshow6 > div:first')
+    .fadeOut(300)
+    .next()
+    .fadeIn(300)
+    .end()
+    .appendTo('.slideshow6');
+},  4000);
+    
+      $(".slideshow7> div:gt(0)").hide();
+
+setInterval(function() { 
+  $('.slideshow7> div:first')
+    .fadeOut(300)
+    .next()
+    .fadeIn(300)
+    .end()
+    .appendTo('.slideshow7');
+},  4000);
+             $(".slideshow8 > div:gt(0)").hide();
+
+setInterval(function() { 
+  $('.slideshow8 > div:first')
+    .fadeOut(300)
+    .next()
+    .fadeIn(300)
+    .end()
+    .appendTo('.slideshow8');
+},  4000);
+       $(".slideshow9 > div:gt(0)").hide();
+
+setInterval(function() { 
+  $('.slideshow9 > div:first')
+    .fadeOut(300)
+    .next()
+    .fadeIn(300)
+    .end()
+    .appendTo('.slideshow9');
+},  4000);
+             $(".slideshow10 > div:gt(0)").hide();
+
+setInterval(function() { 
+  $('.slideshow10 > div:first')
+    .fadeOut(300)
+    .next()
+    .fadeIn(300)
+    .end()
+    .appendTo('.slideshow10');
+},  4000);
+    
+      $(".slideshow11> div:gt(0)").hide();
+
+setInterval(function() { 
+  $('.slideshow11> div:first')
+    .fadeOut(300)
+    .next()
+    .fadeIn(300)
+    .end()
+    .appendTo('.slideshow11');
+},  4000);
+             $(".slideshow12 > div:gt(0)").hide();
+
+setInterval(function() { 
+  $('.slideshow12 > div:first')
+    .fadeOut(300)
+    .next()
+    .fadeIn(300)
+    .end()
+    .appendTo('.slideshow12');
+},  4000);
+    }) // done
+    .fail(function( jqxhr, textStatus, error ) {
+      $(".error").remove();
+      var localData = JSON.parse(localStorage.getItem("amtrakdata"));
+      if(localData == null){
+        $('.main-box').append('<h2 class="error">Could not connect to web server. Data not found in Local Storage.</h2>');
+      }
+      localStorage.setItem("amtrakdata",JSON.stringify(data));
+      var max = data.length;
+      for(var i=0;i<max;i++){
+        var route_id_raw = data[i]['route_id'];
+        var route_id = route_id_raw.toLowerCase();
+        var short_name = data[i]['short_name'];
+        var long_name = data[i]['long_name'];
+        var destination = data[i]['destination'];
+        var arrival = data[i]['arrival'];
+        var updated_arrival = data[i]['updated_arrival'];
+        var departure = data[i]['departure'];
+        var updated_departure = data[i]['updated_departure'];
+        var default_track = data[i]['default_track'];
+        var track_override = data[i]['track_override'];
+        var status = 'Departed';
+        var expiration = data[i]['expiry'];
+           var UpDated=data[0]['record_updated'];
+       var numberr=Number(UpDated);
+          console.log(numberr);
+          var e = new Date(0);
+         var Up= e.setUTCSeconds(numberr);
+        var date=  new Date(Up);
+          console.log(date);
+         var Hour=date.getHours();
+         var Minute=date.getMinutes();
+          console.log(Hour+':'+Minute);
+        var  UpdatedTime=date;
+           if(Hour>=12){
+               Hour=Hour-11;
+               Minute=Minute+30;
+               if(Minute>=60){
+                     Minute=Minute-30;
+               }
+               var  UpdatedTime=Hour+":"+Minute+" am";
+           }
+          else if(Hour<12){
+              Hour=Hour+11;
+              Minute=Minute+30;
+               if(Minute>=60){
+                     Minute=Minute-30;
+               }
+              if(Hour>=12){
+                  Hour=Hour-12;
+              }
+              var  UpdatedTime=Hour+":"+Minute+" pm";
+          }
+         
+        var timeStampNow = moment().tz('America/Resolute');
+        var timeStampExpiration = moment.tz(expiration,"MM/DD/YYYY h:mm A", "America/Resolute");         
+
+        var is_before = moment(timeStampExpiration).isBefore(timeStampNow);
+          
+         ;
+       
+        if(is_before){
+          var expired = true;
+          
+        }
+        else{
+          var expired = false;
+        }
+
+        if(route_id == "am19"){
+         var route_icon = '{{media["am19.png"].url }}';
+        }
+        else if(route_id == "am20"){
+          var route_icon = '{{media["am20.png"].url }}';
+        }
+        else{
+          var route_icon = '{{media["default.png"].url }}';
+        }
+
+
+
+        if(expired || track_override == ""){
+          var correct_track = default_track;
+        }
+        else{
+          var correct_track = track_override;
+        }
+
+        if(expired || updated_departure == ""){
+          var correct_arrival = arrival;
+          var correct_departure = departure;
+        }
+        else{
+          var correct_arrival = updated_arrival;
+          var correct_departure = updated_departure;
+        }
+          
+             var estArHours=data[i].est_ar.substr(8,2);
+           if(estArHours>12 ){
+              estArHours= estArHours-12;
+          }
+          console.log(estArHours);
+             var estArMinutes=data[i].est_ar.substr(10,2);
+             var estAr=estArHours + ':'+ estArMinutes;
+             console.log(estAr);
+             var actAr=data[i].arrival.substr(0,5);
+             console.log(actAr);
+             var estDpHours=data[i].est_dp.substr(8,2);
+           if(estDpHours>12){
+              estDpHours=estDpHours-12;
+          }
+             var estDpMinutes=data[i].est_dp.substr(10,2);
+             var estDp = estDpHours + ':' + estDpMinutes;
+             console.log(estDp);
+             var actDp=data[i].departure.substr(0,5);
+             console.log(actDp)
+
+        var rNum = "r"+(i+1); 
+
+        $("."+rNum).remove(); 
+        $('.main-box').append('<div class="'+rNum+'"></div>');
+        $("."+rNum).append('<img src="'+route_icon+'" alt="train" class="t-icon">');
+        $("."+rNum).append('<div class="t-track">Departing From '+correct_track+'</div>');
+        $("."+rNum).append('<p class="t-number">'+short_name+'</p>');
+        $("."+rNum).append('<p class="t-dest">'+destination+'</p>');
+        $("."+rNum).append('<p class="lastUpdated">'+"Last Updated Time   "+UpdatedTime+'</p>');
+        $("."+rNum).append('<p class="t-status">'+status+'</p>');
+        $("."+rNum).append('<p class="t-dep-label slides"></p>');
+        $("."+rNum).append('<p class="t-arrival-label slides"></p>');
+        $("."+rNum).append('<p class="t-dep slides"></p>');
+       $("."+rNum).append('<p class="t-arrival slides"></p>');
+       
+  console.log(status);             
+        if(status=="On Time"){
+            if(i==0){
+                document.getElementsByClassName('t-dep-label')[0].innerHTML='<div class="slideshow1">'+'<div> Estimated Arrival</div>'+ '<div>Estimated Departure</div>'+ '<div>Scheduled Arrival</div>'+  '<div>Scheduled Departure</div>'+'</div>' ;
+                 document.getElementsByClassName('t-dep')[0].innerHTML=
+            '<div class="slideshow7">'+'<div>'+ estAr + '</div>'+ '<div>'+ estDp+ '</div>'+ '<div>'+data[i].arrival+ '</div>'+  '<div>'+data[i].departure+' </div>'+'</div>';
+            }
+        if(i==1){
+            document.getElementsByClassName('t-dep-label')[1].innerHTML='<div class="slideshow2">'+'<div> Estimated Arrival</div>'+ '<div>Estimated Departure</div>'+ '<div>Scheduled Arrival</div>'+  '<div>Scheduled Departure</div>'+'</div>' ;
+            document.getElementsByClassName('t-dep')[1].innerHTML=
+            '<div class="slideshow7">'+'<div>'+ estAr + '</div>'+ '<div>'+ estDp+ '</div>'+ '<div>'+data[i].arrival+ '</div>'+  '<div>'+data[i].departure+' </div>'+'</div>';
+        }
+           
+                      } 
+        if(status=="Delayed"){
+            if(i==0){
+                 document.getElementsByClassName('t-dep-label slides')[0].innerHTML='<div class="slideshow5">'+'<div> Estimated Arrival</div>'+ '<div>Estimated Departure</div>'+ '<div>Scheduled Arrival</div>'+  '<div>Scheduled Departure</div>'+'</div>' ;
+                document.getElementsByClassName('t-dep slides')[0].innerHTML= 
+            '<div class="slideshow7">'+'<div>'+ estAr + '</div>'+ '<div>'+ estDp+ '</div>'+ '<div>'+data[i].arrival+ '</div>'+  '<div>'+data[i].departure+' </div>'+'</div>';
+            }
+         if(i==1){
+              document.getElementsByClassName('t-dep-label slides')[1].innerHTML='<div class="slideshow6">'+'<div> Estimated Arrival</div>'+ '<div>Estimated Departure</div>'+ '<div>Scheduled Arrival</div>'+  '<div>Scheduled Departure</div>'+'</div>' ;
+             document.getElementsByClassName('t-dep slides')[0].innerHTML=            
+            '<div class="slideshow7">'+'<div>'+ estAr + '</div>'+ '<div>'+ estDp+ '</div>'+ '<div>'+data[i].arrival+ '</div>'+  '<div>'+data[i].departure+' </div>'+'</div>';
+         }
+        }
+     
+         if(status=="Departed"){
+             if(i==0){
+                document.getElementsByClassName('t-dep-label')[0].innerHTML='<div class="slideshow9">'+'<div> Estimated Departure</div>'+ '<div>Estimated<br>Arrival</div>'+ '<div>Scheduled<br>Departure</div>'+  '<div>Scheduled<br>Arrival</div>'+'</div>';
+                 document.getElementsByClassName('t-dep')[0].innerHTML='<div class="slideshow11">'+'<div>'+ estDp +" pm"+ '</div>'+ '<div>'+estAr + " pm"+ '</div>'+ '<div>'+data[i].departure+ '</div>'+  '<div>'+data[i].arrival+' </div>'+'</div>' ;
+                       }
+             if(i==1){
+                document.getElementsByClassName('t-dep-label')[1].innerHTML='<div class="slideshow10">'+'<div> Estimated Departure</div>'+ '<div>Estimated<br>Arrival</div>'+ '<div>Scheduled<br>Departure</div>'+  '<div>Scheduled<br>Arrival</div>'+'</div>';
+                 document.getElementsByClassName('t-dep')[1].innerHTML='<div class="slideshow12">'+'<div>'+ estDp +" pm"+ '</div>'+ '<div>'+estAr + " pm"+ '</div>'+ '<div>'+data[i].departure+ '</div>'+  '<div>'+data[i].arrival+' </div>'+'</div>' ;
+                       }
+         
+            
+            }
+        
+      }
+              $(".slideshow1 > div:gt(0)").hide();
+
+setInterval(function() { 
+  $('.slideshow1 > div:first')
+    .fadeOut(300)
+    .next()
+    .fadeIn(300)
+    .end()
+    .appendTo('.slideshow1');
+},  4000);
+             $(".slideshow2 > div:gt(0)").hide();
+
+setInterval(function() { 
+  $('.slideshow2 > div:first')
+    .fadeOut(300)
+    .next()
+    .fadeIn(300)
+    .end()
+    .appendTo('.slideshow2');
+},  4000);
+    
+      $(".slideshow3 > div:gt(0)").hide();
+
+setInterval(function() { 
+  $('.slideshow3 > div:first')
+    .fadeOut(300)
+    .next()
+    .fadeIn(300)
+    .end()
+    .appendTo('.slideshow3');
+},  4000);
+             $(".slideshow4 > div:gt(0)").hide();
+
+setInterval(function() { 
+  $('.slideshow4 > div:first')
+    .fadeOut(300)
+    .next()
+    .fadeIn(300)
+    .end()
+    .appendTo('.slideshow4');
+},  4000);
+      
+ $(".slideshow5 > div:gt(0)").hide();
+
+setInterval(function() { 
+  $('.slideshow5 > div:first')
+    .fadeOut(300)
+    .next()
+    .fadeIn(300)
+    .end()
+    .appendTo('.slideshow5');
+},  2000);
+             $(".slideshow6 > div:gt(0)").hide();
+
+setInterval(function() { 
+  $('.slideshow6 > div:first')
+    .fadeOut(300)
+    .next()
+    .fadeIn(300)
+    .end()
+    .appendTo('.slideshow6');
+},  4000);
+    
+      $(".slideshow7> div:gt(0)").hide();
+
+setInterval(function() { 
+  $('.slideshow7> div:first')
+    .fadeOut(300)
+    .next()
+    .fadeIn(300)
+    .end()
+    .appendTo('.slideshow7');
+},  4000);
+             $(".slideshow8 > div:gt(0)").hide();
+
+setInterval(function() { 
+  $('.slideshow8 > div:first')
+    .fadeOut(300)
+    .next()
+    .fadeIn(300)
+    .end()
+    .appendTo('.slideshow8');
+},  4000);
+       $(".slideshow9 > div:gt(0)").hide();
+
+setInterval(function() { 
+  $('.slideshow9 > div:first')
+    .fadeOut(300)
+    .next()
+    .fadeIn(300)
+    .end()
+    .appendTo('.slideshow9');
+},  4000);
+             $(".slideshow10 > div:gt(0)").hide();
+
+setInterval(function() { 
+  $('.slideshow10 > div:first')
+    .fadeOut(300)
+    .next()
+    .fadeIn(300)
+    .end()
+    .appendTo('.slideshow10');
+},  4000);
+    
+      $(".slideshow11> div:gt(0)").hide();
+
+setInterval(function() { 
+  $('.slideshow11> div:first')
+    .fadeOut(300)
+    .next()
+    .fadeIn(300)
+    .end()
+    .appendTo('.slideshow11');
+},  4000);
+             $(".slideshow12 > div:gt(0)").hide();
+
+setInterval(function() { 
+  $('.slideshow12 > div:first')
+    .fadeOut(300)
+    .next()
+    .fadeIn(300)
+    .end()
+    .appendTo('.slideshow12');
+},  4000);
+    });
+      
+      
+     
+  } // fetchData
+
+ /*function toggleTimes(){
+   $(".t-dep").fadeToggle('slow');
+    $(".t-dep-label").fadeToggle('slow');
+   $(".t-arrival-label").fadeToggle('slow');
+    $(".t-arrival").fadeToggle('slow');
+   
+  }
+ 
+  */
+   
+  setTimeout(function(){
+    location = ''
+  },150000);
+     
+     
+ }); // ready 
+</script>
+</html>

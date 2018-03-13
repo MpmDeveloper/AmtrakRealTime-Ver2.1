@@ -1,0 +1,276 @@
+p{
+  margin: 0px;
+}
+.main-box{
+  width: 1040px;
+  height: 950px;
+  font-family: 'CartoGothicStd-Bold';
+  color: #003a5d;
+  position: relative;
+}
+.error {
+  color: #000;
+  top: 360px;
+  position: absolute;
+  left: 87px;
+}
+/*
+For all rows
+*/
+.t-icon{
+  position: absolute;
+  left: 47px;
+  width: 106px;
+}
+.t-track{
+  color: #033b5e;
+  font-size: 38px;
+  position: absolute;
+  letter-spacing: -1px;
+  margin: 0px;
+  text-align: center;
+  left: 35px;
+}
+.t-number{
+  color: #023A5D;
+  font-size: 84px;
+  position: absolute;
+  left: 280px;
+}
+.t-dest{
+  color: #023A5D;
+  font-size: 84px;
+  position: absolute;
+  right: 20px;
+}
+.t-dep-label{
+  color: #ffffff;
+  font-size: 42px;
+  position: absolute;
+    height: 92px;
+    overflow: hidden;
+  left: 30px;
+  width: 195px;
+  line-height: 42px;
+}
+.t-arrival-label{
+  color: #ffffff;
+  font-size: 42px;
+  position: absolute;
+    height: 92px;
+    overflow: hidden;
+  left: 30px;
+  width: 195px;
+  line-height: 42px;
+  display: none;
+}
+.t-dep{
+  color: #023A5D;
+  font-size: 60px;
+  width: 289px;
+    height: 92px;
+    overflow: hidden;
+  text-align: center;
+  position: absolute;
+  left: 260px;
+}
+.lastUpdated{
+  color: white;
+  font-size: 35px;
+  width: 100%;
+    height: 92px;
+    overflow: hidden;
+    padding-right: 15px;
+  text-align: right;
+  position: absolute;
+  
+}
+.t-arrival{
+  color: #023A5D;
+  font-size: 65px;
+  width: 289px;
+  text-align: center;
+  position: absolute;
+  left: 260px;
+  display: none;
+}
+.t-status{
+  color: #023A5D;
+  font-size: 70px;
+  position: absolute;
+  right: 20px;
+}
+/*
+Row one
+*/
+.r1 .t-icon{
+  top: 346px;
+}
+.r1 .lastUpdated{
+    display:none;
+}
+.r1 .t-track{
+  top: 550px;
+}
+.r1 .t-number{
+  top: 336px;
+}
+.r1 .t-dest{
+  top: 336px;
+}
+.r1 .t-dep-label{
+  top: 466px;  
+}
+.r1 .t-arrival-label{
+  top: 466px;
+}
+.r1 .t-dep{
+  top: 460px;  
+}
+.r1 .t-arrival{
+  top: 460px;  
+}
+.r1 .t-status{
+  top: 455px;
+}
+/*
+Row two
+*/
+.r2 .t-icon{
+  top: 610px;
+}
+.r2 .t-track{
+  top: 820px;
+}
+.r2 .t-number{
+  top: 606px;
+}
+.r2 .t-dest{
+  top: 602px;
+}
+.r2 .t-arrival-label{
+  top: 730px;  
+}
+.r2 .t-dep-label{
+  top: 730px;  
+}
+.r2 .t-dep{
+  top: 724px;
+}
+.r2 .lastUpdated{
+  top: 890px;
+}
+.r2 .t-arrival{
+  top: 724px;
+}
+.r2 .t-status{
+  top: 725px;
+}
+.slideshow1 { 
+    position: relative; 
+    width:100%; 
+    height: 92px; 
+   }
+.slideshow2 { 
+    position: relative; 
+    width:100%; 
+    height: 92px; 
+   }
+.slideshow3 { 
+    position: relative; 
+    width:100%; 
+    height: 92px; 
+   }
+.slideshow4 { 
+    position: relative; 
+    width:100%; 
+    height: 92px; 
+   }
+.slideshow5 { 
+    position: relative; 
+    width:100%; 
+    height: 92px; 
+   }
+.slideshow6 { 
+    position: relative; 
+    width:100%; 
+    height: 92px; 
+   }
+.slideshow7 { 
+    position: relative; 
+    width:100%; 
+    height: 92px; 
+   }
+.slideshow8 { 
+    position: relative; 
+    width:100%; 
+    height: 92px; 
+   }
+.slideshow9 { 
+    position: relative; 
+    width:100%; 
+    height: 92px; 
+   }
+.slideshow10 { 
+    position: relative; 
+    width:100%; 
+    height: 92px; 
+   }
+.slideshow11 { 
+    position: relative; 
+    width:100%; 
+    height: 92px; 
+   }
+.slideshow12 { 
+    position: relative; 
+    width:100%; 
+    height: 92px; 
+   }
+.slideshow1 > div { 
+    position: absolute; 
+    
+}
+.slideshow2 > div { 
+    position: absolute; 
+    
+}
+.slideshow3 > div { 
+    position: absolute; 
+    
+}
+.slideshow4 > div { 
+    position: absolute; 
+    
+}
+.slideshow5 > div { 
+    position: absolute; 
+    
+}
+.slideshow6 > div { 
+    position: absolute; 
+    
+}
+.slideshow7 > div { 
+    position: absolute; 
+    
+}
+.slideshow8 > div { 
+    position: absolute; 
+    
+}
+.slideshow9 > div { 
+    position: absolute; 
+    
+}
+.slideshow10 > div { 
+    position: absolute; 
+    
+}
+.slideshow11 > div { 
+    position: absolute; 
+    
+}
+.slideshow12 > div { 
+    position: absolute; 
+    
+}
